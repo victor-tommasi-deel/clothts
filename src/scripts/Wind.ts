@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { Clock } from "three";
 
 const noise = new SimplexNoise();
-const baseForce = 2000;
+const baseForce = 1000;
 const off = 0.05;
 
 export default class Wind {

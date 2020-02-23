@@ -1,6 +1,8 @@
 import React, { Component, createRef, MutableRefObject } from 'react';
 import Scene from './scripts/Scene';
 import './App.css';
+import giovannnnna from './assets/giovannnnna.jpg';
+
 
 type Props = {};
 type State = {
@@ -51,7 +53,7 @@ class App extends Component<Props, State> {
             <figure className="title__figure">
               <img
                 ref={this.tileImageRef}
-                src="https://images.unsplash.com/photo-1541737923-4dc81f2d1d41?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=3334&q=80"
+                src={giovannnnna}
                 className="tile__image"
                 alt="tile"
                 width="400"

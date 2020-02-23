@@ -79,7 +79,7 @@ export default class Figure {
         position.getY(i) * height,
         position.getZ(i)
       );
-      
+
       const stitch = new C.Body({
         mass: row === 0 ? 0 : mass / position.count,
         linearDamping: 0.8,
@@ -102,7 +102,8 @@ export default class Figure {
   }
 
   connect = (i: number, j: number) => {
-    const c = new C.DistanceConstraint(this.stitches[i], this.stitches[j], 0, 0);
+    // @ts-ignore
+    const c = new C.DistanceConstraint(this.stitches[i], this.stitches[j]);
 
     this.world.addConstraint(c);
   }
