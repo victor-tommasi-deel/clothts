@@ -3,18 +3,22 @@ import Figure from "./Figure";
 import Wind from "./Wind";
 import C from "cannon";
 
+interface Figures { figure: Figure, wind: Wind };
+
 export default class Scene {
   container: HTMLCanvasElement;
   scene: THREE.Scene;
   renderer: THREE.WebGLRenderer;
   camera: THREE.PerspectiveCamera;
-  figure: Figure;
-  imageContainer: HTMLImageElement;
+  // figure: Figure;
+  figures: Array<Figures>;
+  imageContainers: Array<HTMLImageElement>;
   world: C.World;
-  wind: Wind;
+  // wind: Wind;
+  // winds: Array<Wind>;
   ambientLight: THREE.AmbientLight;
 
-  constructor(container: HTMLCanvasElement, imageContainer: HTMLImageElement) {
+  constructor(container: HTMLCanvasElement, imageContainers: Array<HTMLImageElement>) {
     this.container = container;
     this.scene = new THREE.Scene();
     this.world = new C.World();
@@ -31,9 +35,23 @@ export default class Scene {
     this.ambientLight = new THREE.AmbientLight(0xffffff, 2);
     this.scene.add(this.ambientLight);
     this.camera = this.initCamera(800);
-    this.imageContainer = imageContainer;
-    this.figure = new Figure(this.scene, this.imageContainer, this.world);
-    this.wind = new Wind(this.figure.mesh);
+    this.imageContainers = imageContainers;
+    this.figures = this.initFigures();
+  }
+
+  initFigures = () => {
+    const figures = [];
+    for (let index = 0; index < this.imageContainers.length; index++) {
+      const imageContainer = this.imageContainers[index];
+      const figure = new Figure(this.scene, imageContainer, this.world);
+      const wind = new Wind(figure.mesh);
+      const obj = {
+        figure,
+        wind
+      }
+      figures.push(obj);
+    }
+    return figures;
   }
 
   initCamera = (perspective: number) => {
@@ -50,6 +68,21 @@ export default class Scene {
     return camera;
   }
 
+  getFigures = () => this.figures;
+
+  getWorld = () => this.world;
+
+  getScene = () => this.scene;
+
+  updateFigures = () => {
+    for (let index = 0; index < this.figures.length; index++) {
+      const { figure, wind } = this.figures[index];
+      wind.update();
+      figure.update();
+      figure.applyWind(wind);
+    }
+  }
+
   update = () => {
     if (
       this.renderer === undefined ||
@@ -57,10 +90,8 @@ export default class Scene {
       this.camera === undefined
     )
       return;
-    
-    this.wind.update();
-    this.figure.update();
-    this.figure.applyWind(this.wind);
+
+    this.updateFigures();
     this.world.step(1 / 60);
     this.renderer.render(this.scene, this.camera);
   }
